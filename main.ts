@@ -15,6 +15,12 @@ import { join } from "node:path";
 const LINE =
   "Effective today, I am no longer your rate limit. Good luck explaining to the database why it is on fire.";
 
+// The gate counts bytes (1-140): fail loudly here rather than submitting
+// a line the scorer would refuse.
+if (Buffer.byteLength(LINE, "utf8") < 1 || Buffer.byteLength(LINE, "utf8") > 140) {
+  throw new Error("LINE must be 1-140 bytes");
+}
+
 const outDir = "/output";
 mkdirSync(outDir, { recursive: true });
 const out = join(outDir, "entry.txt");
